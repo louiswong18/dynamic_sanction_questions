@@ -7,14 +7,31 @@ function App() {
 
   useEffect(() => {
     // A function to transform the questions data into a tree structure
-    const transformQuestionsToTree = (questions) => {
+    const transformQuestionsToTree = (data) => {
+      const sections = data.map((section) => {
+        const sectionNode = {
+          name: `Section ${section.section}`,
+          children: section.questions.map((question) => {
+            const questionNode = {
+              name: `Q${question.questionId}: ${question.text}`,
+              children: question.dependencies.map((dependency) => {
+                const dependencyNode = {
+                  name: `Depends on Q${dependency.questionId}: ${dependency.answer}`
+                };
+                return dependencyNode;
+              })
+            };
+            return questionNode;
+          })
+        };
+        return sectionNode;
+      });
+
       const parsedData = {
         name: "Sanctions Questions",
-        children: questions.map((question) => ({
-          name: question.number,
-          children: [{ name: question.text }]
-        }))
+        children: sections
       };
+
       return parsedData;
     };
 
